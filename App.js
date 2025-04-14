@@ -8,8 +8,8 @@ import {
   Platform,
   TextInput,
   TouchableOpacity,
-  Animated,
 } from "react-native";
+import { Picker } from '@react-native-picker/picker';
 
 // COMPONENTE REUTILIZÁVEL
 class HuntingTopic extends Component {
@@ -35,55 +35,68 @@ class HuntingTopic extends Component {
 // COMPONENTE PRINCIPAL
 export default class App extends Component {
   scrollRef = createRef();
-
-  state = {
-    search: '',
-    highlightedIndex: null,
-    topics: [
-      {
-        mainImage: "https://st3.depositphotos.com/9881890/17090/i/450/depositphotos_170903838-stock-photo-bird-hunting.jpg",
-        description: "Confira um dos Animais da caça esportiva e suas peculiaridades no ato da caça",
-        smallImage: "https://images.unsplash.com/photo-1465247431621-ae634a2477be?fm=jpg&q=60&w=3000",
-        tipText: "A caça de aves aquáticas exige precisão e silêncio.",
-      },
-      {
-        mainImage: "https://st3.depositphotos.com/9881890/17090/i/450/depositphotos_170904672-stock-photo-hunter-loading-gun-with-bullets.jpg",
-        description: "Equipamentos modernos e segurança na caça",
-        smallImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdm9NicOuJ-14blYzu6a1pEv0wO17zfPH4xQ&s",
-        tipText: "Tecnologia moderna e sua evolução auxilia na segurança e precisão.",
-      },
-      {
-        mainImage: "https://www.estimacao.com.br/y/5002/caes-caca-e1564066951560.jpg",
-        description: "Cães de caça: algumas raças utilizadas na caça tradicional",
-        smallImage: "https://s2-globorural.glbimg.com/sXySyEVNX44TFUvywoqpMmmcIpI=/0x0:3600x2640/888x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_afe5c125c3bb42f0b5ae633b58923923/internal_photos/bs/2024/W/e/CMn54eSvKAd2aSqSlDLQ/1aev3a5848.jpg",
-        tipText: "Raça de cachorro, cão Rastreador Brasileiro, cão usado na caça e proteção rural",
-      },
-      {
-        mainImage: "https://img.odcdn.com.br/wp-content/uploads/2020/12/Przemek-Tokar.Shutterstock.jpg",
-        description: "Técnicas de camuflagem na floresta",
-        smallImage: "https://a-static.mlcdn.com.br/1500x1500/camuflagem-respiravel-ciclismo-balaclava-bone-mascara-facial-completa-caca-ao-ar-livre-lenco-de-others/aliexpress/202819799/6144cd132db15cd2642928bf47be0dd0.jpeg",
-        tipText: "Exemplo de roupa(equipamento) de camuflagem usado na caça",
-      },
-      {
-        mainImage: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Distribui%C3%A7%C3%A3o_cervo_do_pantanal_atual.png",
-        description: "Locais para caçar o cervo do pantanal",
-        smallImage: "https://conexaoplaneta.com.br/wp-content/uploads/2019/07/encontro-cervo-do-pantanal-zig-koch-2-conexao-planeta.jpg",
-        tipText: "O cervo-do-pantanal habita áreas alagadas e vegetações densas.",
-      },
-      {
-        mainImage: "https://media.istockphoto.com/id/1181914680/pt/foto/man-bow-hunting-in-rural-alberta-canada.jpg?s=612x612&w=0&k=20&c=8zJsNpCmfYX_EyZ4gx04zBuef3GvFyFujGTRUfa0qho=",
-        description: "Caça silenciosa com arco e flecha",
-        smallImage: "https://arcoeflechacuritiba.com.br/wp-content/uploads/2018/10/tipos-de-arcos.jpg?w=659",
-        tipText: "Confira alguns dos tipos de arcos utilizados ao longo do tempo e sua evolução",
-      },
-    ],
-  };
-
   itemRefs = [];
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      nome: '',
+      search: '',
+      highlightedIndex: null,
+      filtroSelecionado: '',
+      selectedAnimal: '',
+      selectedEquipamento: '',
+      nightMode: false,
+      topics: [
+        {
+          mainImage: "https://st3.depositphotos.com/9881890/17090/i/450/depositphotos_170903838-stock-photo-bird-hunting.jpg",
+          description: "Confira um dos Animais da caça esportiva e suas peculiaridades no ato da caça",
+          smallImage: "https://images.unsplash.com/photo-1465247431621-ae634a2477be?fm=jpg&q=60&w=3000",
+          tipText: "A caça de aves aquáticas exige precisão e silêncio.",
+        },
+        {
+          mainImage: "https://st3.depositphotos.com/9881890/17090/i/450/depositphotos_170904672-stock-photo-hunter-loading-gun-with-bullets.jpg",
+          description: "Equipamentos modernos e segurança na caça",
+          smallImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdm9NicOuJ-14blYzu6a1pEv0wO17zfPH4xQ&s",
+          tipText: "Tecnologia moderna e sua evolução auxilia na segurança e precisão.",
+        },
+        {
+          mainImage: "https://www.estimacao.com.br/y/5002/caes-caca-e1564066951560.jpg",
+          description: "Cães de caça: algumas raças utilizadas na caça tradicional",
+          smallImage: "https://s2-globorural.glbimg.com/sXySyEVNX44TFUvywoqpMmmcIpI=/0x0:3600x2640/888x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_afe5c125c3bb42f0b5ae633b58923923/internal_photos/bs/2024/W/e/CMn54eSvKAd2aSqSlDLQ/1aev3a5848.jpg",
+          tipText: "Raça de cachorro, cão Rastreador Brasileiro, cão usado na caça e proteção rural",
+        },
+        {
+          mainImage: "https://img.odcdn.com.br/wp-content/uploads/2020/12/Przemek-Tokar.Shutterstock.jpg",
+          description: "Técnicas de camuflagem na floresta",
+          smallImage: "https://a-static.mlcdn.com.br/1500x1500/camuflagem-respiravel-ciclismo-balaclava-bone-mascara-facial-completa-caca-ao-ar-livre-lenco-de-others/aliexpress/202819799/6144cd132db15cd2642928bf47be0dd0.jpeg",
+          tipText: "Exemplo de roupa(equipamento) de camuflagem usado na caça",
+        },
+        {
+          mainImage: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Distribui%C3%A7%C3%A3o_cervo_do_pantanal_atual.png",
+          description: "Locais para caçar o cervo do pantanal",
+          smallImage: "https://conexaoplaneta.com.br/wp-content/uploads/2019/07/encontro-cervo-do-pantanal-zig-koch-2-conexao-planeta.jpg",
+          tipText: "O cervo-do-pantanal habita áreas alagadas e vegetações densas.",
+        },
+        {
+          mainImage: "https://media.istockphoto.com/id/1181914680/pt/foto/man-bow-hunting-in-rural-alberta-canada.jpg?s=612x612&w=0&k=20&c=8zJsNpCmfYX_EyZ4gx04zBuef3GvFyFujGTRUfa0qho=",
+          description: "Caça silenciosa com arco e flecha",
+          smallImage: "https://arcoeflechacuritiba.com.br/wp-content/uploads/2018/10/tipos-de-arcos.jpg?w=659",
+          tipText: "Confira alguns dos tipos de arcos utilizados ao longo do tempo e sua evolução",
+        },
+      ],
+    };
+  }
 
   componentDidMount() {
     this.itemRefs = this.state.topics.map(() => createRef());
   }
+
+  entradaNome = (texto) => {
+    this.setState({
+      nome: texto.length > 0 ? 'Seja bem vindo : ' + texto : ''
+    });
+  };
 
   handleSearch = () => {
     const { search, topics } = this.state;
@@ -97,20 +110,30 @@ export default class App extends Component {
         (x, y) => {
           this.scrollRef.current.scrollTo({ y, animated: true });
           this.setState({ highlightedIndex: index });
-
-          setTimeout(() => {
-            this.setState({ highlightedIndex: null });
-          }, 2000);
+          setTimeout(() => this.setState({ highlightedIndex: null }), 2000);
         }
       );
     }
   };
+  toggleNightMode = () => {
+    this.setState((prevState) => ({ nightMode: !prevState.nightMode }));
+  };
 
   render() {
-    const { search, topics, highlightedIndex } = this.state;
+    const { search, nome, topics, highlightedIndex, nightMode, selectedAnimal, selectedEquipamento } = this.state;
 
     return (
       <View style={{ flex: 1, backgroundColor: '#f4f1ec' }}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.entrada}
+            placeholder="Digite seu nome"
+            onChangeText={this.entradaNome}
+          />
+          <Text style={styles.texto}>{nome}</Text>
+        </View>
+
+  
         <View style={styles.searchBar}>
           <TextInput
             style={styles.input}
@@ -123,14 +146,66 @@ export default class App extends Component {
           </TouchableOpacity>
         </View>
 
+        <View style={styles.filterContainer}>
+  <Text style={styles.subtitleFiltro}>Filtro</Text>
+
+  <Picker
+    selectedValue={this.state.filtroSelecionado}
+    style={styles.picker}
+    onValueChange={(itemValue) => this.setState({ filtroSelecionado: itemValue })}
+  >
+    <Picker.Item label="Selecione um filtro" value="" />
+    <Picker.Item label="Animal" value="animal" />
+    <Picker.Item label="Equipamento" value="equipamento" />
+  </Picker>
+
+  {this.state.filtroSelecionado === 'animal' && (
+    <View>
+      <Text style={styles.pickerLabel}>Tipo de animal:</Text>
+      <Picker
+        selectedValue={this.state.selectedAnimal}
+        style={styles.picker}
+        onValueChange={(itemValue) => this.setState({ selectedAnimal: itemValue })}
+      >
+        <Picker.Item label="Selecione um animal" value="" />
+        <Picker.Item label="Aves" value="aves" />
+        <Picker.Item label="Cervos" value="cervos" />
+        <Picker.Item label="Cães de caça" value="caes" />
+      </Picker>
+    </View>
+  )}
+
+  {this.state.filtroSelecionado === 'equipamento' && (
+    <View>
+      <Text style={styles.pickerLabel}>Tipo de equipamento:</Text>
+      <Picker
+        selectedValue={this.state.selectedEquipamento}
+        style={styles.picker}
+        onValueChange={(itemValue) => this.setState({ selectedEquipamento: itemValue })}
+      >
+        <Picker.Item label="Selecione um equipamento" value="" />
+        <Picker.Item label="Espingarda" value="espingarda" />
+        <Picker.Item label="Arco e flecha" value="arco" />
+        <Picker.Item label="Cães" value="caes" />
+        <Picker.Item label="Camuflagem" value="camuflagem" />
+      </Picker>
+    </View>
+  )}
+</View>
+
+
+
         <ScrollView ref={this.scrollRef} style={styles.container}>
           <View style={styles.content}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>Portal do Caçador</Text>
             </View>
-
             <Text style={styles.subtitle}>
-              Explore o mundo da caça e suas peculiaridades
+              “Mais do que caçar, é preciso saber observar, ouvir e aprender com o ambiente.”
+            </Text>
+            
+            <Text style={styles.subtitleText}>
+              DESTAQUES
             </Text>
 
             {topics.map((item, index) => (
@@ -148,7 +223,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f4f1ec',
-    paddingTop: 40,
+    paddingTop: 10,
   },
   content: {
     alignItems: 'center',
@@ -245,19 +320,64 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   searchButton: {
-    marginTop: 30,
-    marginBottom: 30,
+    marginLeft: 10,
     padding: 10,
     backgroundColor: '#006400',
     borderRadius: 10,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  
   searchIcon: {
     fontSize: 20,
     color: '#fff',
   },
+  inputContainer: {
+    padding: 10,
+    backgroundColor: '#fff',
+  },
+  entrada: {
+    borderWidth: 1,
+    borderColor: 'black',
+    fontSize: 18,
+    height: 40,
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 8,
+    marginTop: 30,
+  },
+  texto: {
+    textAlign: 'center',
+    fontSize: 22,
+  },
+  filterContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 10,
+  },
   
+  subtitleFiltro: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'black',
+    marginBottom: 15,
+  },
+  
+  pickerLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 10,
+  },
+  
+  picker: {
+    height: 50,
+    width: '100%',
+  },
+  subtitleText: {
+    fontSize: 25,
+    color: 'black',
+    borderBottomWidth: 3,
+  }
+    
 });
